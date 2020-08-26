@@ -48,7 +48,7 @@ module.exports = {
   "menu.new-card": "New Card",
   "menu.chain-discover": "Cards on chain",
   "menu.collection": "Collection",
-  "menu.my-cards": "My Cards",
+  "menu.my-cards": "My Purchased Cards",
   "menu.transactions": "Transactions",
 
   /* 04.Error Page */

@@ -18,7 +18,9 @@ class AddressButton extends Component {
       return;
     }
     if (typeof window.ethereum === 'undefined') {
-      NotificationManager.warning('Please install metamask!', 'warning', 3000, null, null, '');
+      NotificationManager.warning(
+        (<div>Please install metamask by <a href="https://metamask.io" target="_blank" without="true" rel="noopener noreferrer">clicking here</a></div>),
+        'warning', 6000, null, null, '');
       return;
     }
     if (window.ethereum.networkVersion !== '3') {

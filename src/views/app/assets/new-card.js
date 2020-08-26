@@ -26,17 +26,20 @@ const RegisterSchema = Yup.object().shape({
 });
 
 const items = ['dataLink', 'title', 'description', 'totalSupply', 'price'];
-
+const extesionImage = ["image/pjp", "image/jpg", "image/pjpeg", "image/jfif", "image/png", "image/jpg", "image/jpeg", "image/gif"];
+const extesionVideo = ["video/ogv", "video/ogm", "video/ogg", "video/webm", "video/mp4"];
 class NewCardPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      image: null,
-      ipfsHash: '',
       txHash: '',
       uploading: false,
       submitting: false,
       collections: [],
+      fileData: null,
+      fileExt: 0,
+      ipfsHash: '',
+      ipfsExt: 0,
       loading: true,
     }
   }
@@ -57,24 +60,22 @@ class NewCardPage extends Component {
       console.log(errorMsg[0]);
     }
   }
-
   Capitalize(str) {
     return str.charAt(0).toUpperCase() + str.slice(1);
   }
-
   handleFileUpload = () => {
-    const { image, uploading } = this.state;
-    if (!image) {
+    const { fileData, fileExt, uploading } = this.state;
+    if (!fileData) {
       NotificationManager.warning("Please upload file", "Warning", 3000, null, null, '');
       return;
     }
-    if (!uploading && image) {
+    if (!uploading && fileData) {
       this.setState(
         { uploading: true },
         async () => {
           try {
-            const result = await ipfs.add(image);
-            this.setState({ ipfsHash: result.path, uploading: false });
+            const result = await ipfs.add(fileData);
+            this.setState({ ipfsHash: result.path, ipfsExt: fileExt, uploading: false });
           } catch (error) {
             this.setState({ uploading: false });
             NotificationManager.error("Failed to upload to ipfs", "error", 3000, null, null, '');
@@ -87,18 +88,29 @@ class NewCardPage extends Component {
     event.preventDefault()
     if (!this.state.submitting) {
       const file = event.target.files[0];
+      let fileExt = 999;
+      if (extesionImage.includes(file.type)) {
+        fileExt = 0;
+      } else if (extesionVideo.includes(file.type)) {
+        fileExt = 1;
+      }
+      if (fileExt === 999) {
+        NotificationManager.warn("Please upload image or video files", "Warning", 3000, null, null, '');
+        return;
+      }
       if (file) {
         let reader = new window.FileReader();
         reader.readAsArrayBuffer(file);
-        reader.onloadend = () => this.convertToBuffer(reader);
+        reader.onloadend = () => this.convertToBuffer(reader, fileExt);
       }
     }
   };
-  convertToBuffer = async (reader) => {
-    const image = await Buffer.from(reader.result);
-    this.setState({ image });
+  convertToBuffer = async (reader, ext) => {
+    const data = await Buffer.from(reader.result);
+    this.setState({ fileData: data, fileExt: ext });
   };
   handleRegister = (values) => {
+    const { submitting, ipfsExt } = this.state;
     if (this.state.submitting) {
       return;
     }
@@ -118,7 +130,7 @@ class NewCardPage extends Component {
                 const priceBN = new BigNumber(price).multipliedBy(decimalBN);
 
                 const encodedABI = punksContract.contract.methods['safeMint'](
-                  address, dataLink, title, description, totalSupply, `0x${priceBN.toString(16)}`, values.collection.id
+                  address, dataLink, title, description, totalSupply, `0x${priceBN.toString(16)}`, values.collection.id, ipfsExt
                 ).encodeABI();
                 const gasPrice = await web3.eth.getGasPrice();
 
@@ -189,7 +201,7 @@ class NewCardPage extends Component {
                 <input
                   type="file"
                   className="form-group"
-                  accept="image/png,image/jpg,image/jpeg,image/gif"
+                  accept="image/png,image/jpg,image/jpeg,image/gif,video/ogg,video/webm,video/mp4"
                   onChange={this.handleFileChange}
                 />
                 <Button color="primary" size="sm" onClick={this.handleFileUpload}

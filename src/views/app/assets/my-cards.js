@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
-import { Row, Col, Card, CardBody } from "reactstrap";
+import { Row, Col, Card, CardBody, Badge } from "reactstrap";
 import moment from 'moment';
 import ReactImageAppear from 'react-image-appear';
 
@@ -68,7 +68,10 @@ class MyCardsPage extends Component {
                       <div>Description: <strong>{item.card.description}</strong></div>
                       <div>Price: <strong>{item.card.price}</strong></div>
                       <div>Amount: <strong>{item.amount}</strong></div>
-                      <div>Date: <strong>{moment(item.card.createdAt).format("MM/DD/YYYY hh:mm")}</strong></div>
+                      <div>Date: <strong>{moment(item.createdAt).format("MM/DD/YYYY hh:mm")}</strong></div>
+                      {
+                        item.card.deletedAt ? (<Badge>Card Deleted</Badge>) : ""
+                      }
                     </CardBody>
                   </Card>
                 </Colxx>)
