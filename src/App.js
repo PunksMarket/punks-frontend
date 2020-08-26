@@ -74,12 +74,14 @@ class App extends Component {
   handleAddressChanged = (accounts) => {
     if (typeof window.ethereum !== 'undefined') {
       window.location.reload(false);
+      window.location.href = "/";
       this.props.setAddressRequest(window.ethereum.selectedAddress);
     }
   }
   handleNetworkChanged = (networkId) => {
     console.log('networkId :>> ', networkId);
     window.location.reload(false);
+    window.location.href = "/";
   }
 
   render() {

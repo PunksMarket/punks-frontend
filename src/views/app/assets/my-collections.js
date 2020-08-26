@@ -115,7 +115,7 @@ class NewCollectionPage extends Component {
                   <Colxx xxs="12" xs="6" md="4" lg="3" key={index}>
                     <Card className="mb-2">
                       <CardBody>
-                        <div onClick={() => { this.props.history.push(`/app/collection/${item.id}/all`) }}>
+                        <div onClick={() => { this.props.history.push(`/app/collection/${item.id}/all`) }} className="cursor-pointer my-collection">
                           <div><h5>{item.name}</h5></div>
                           <div>{moment(item.createdAt).format("MM/DD/YYYY hh:mm")}</div>
                           <div>{item.tokenCount} tokens</div>

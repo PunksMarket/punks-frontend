@@ -17,7 +17,7 @@ const TransactionPage = React.lazy(() =>
 const Register = ({ match }) => (
   <Suspense fallback={<div className="loading" />}>
     <Switch>
-      <Redirect exact from={`${match.url}/`} to={`${match.url}/new-collection`} />
+      <Redirect exact from={`${match.url}/`} to={`${match.url}/my-collections`} />
       <Route
         path={`${match.url}/new-card`}
         render={props => <NewCardPage {...props} />}
