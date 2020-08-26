@@ -59,10 +59,13 @@ class MyCardsPage extends Component {
                   <Card className="mb-2">
                     <CardBody>
                       <div className="d-flex justify-content-center align-items-center mb-2" style={{ height: "250px", backgroundColor: "transparent" }}>
-                        <ReactImageAppear
-                          src={`https://ipfs.io/ipfs/${item.card.dataLink}`}
-                          className="img-thumbnail mw-100 mh-100"
-                        />
+                        {item.card.ext === 0 ?
+                          (<ReactImageAppear
+                            src={`https://ipfs.io/ipfs/${item.card.dataLink}`}
+                            className="img-thumbnail mw-100 mh-100"
+                          />) :
+                          (<video src={`https://ipfs.io/ipfs/${item.dataLink}`} loop autoPlay className=" mw-100 mh-100" />)
+                        }
                       </div>
                       <div>Name: <strong>{item.card.title}</strong></div>
                       <div>Description: <strong>{item.card.description}</strong></div>

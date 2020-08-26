@@ -95,7 +95,7 @@ class DiscoverPage extends Component {
     }
   }
   handleCardEdit = async (tokenId, cardId) => {
-    console.log('tokenId :>> ', tokenId);
+    // console.log('tokenId :>> ', tokenId);
   }
   handleCardRemove = async (tokenId, cardId) => {
     if (!this.checkEthereum()) {
@@ -162,7 +162,6 @@ class DiscoverPage extends Component {
               {
                 data && data.length > 0 ?
                   (data.map((item, index) => {
-                    console.log('item :>> ', item);
                     return (<Colxx xxs="12" xs="6" md="4" lg="3" key={index}>
                       <Card className="mb-2">
                         <CardBody>
