@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
-import { CardText, CardSubtitle, Row, Card, CardBody, CardImg, Button, Badge } from "reactstrap";
+import { Modal, ModalHeader, ModalBody, Row, Card, CardBody, Button, Badge } from "reactstrap";
 import Switch from "rc-switch";
 import { NotificationManager } from '../../components/common/react-notifications';
 import { Colxx, Separator } from "../../components/common/CustomBootstrap";
@@ -20,6 +20,8 @@ class DiscoverPage extends Component {
       txHash: '',
       user: -1,
       loading: true,
+      isModal: false,
+      dataIndex: -1
     }
   }
   async componentDidMount() {
@@ -140,7 +142,11 @@ class DiscoverPage extends Component {
     }
 
     const { mode } = this.props.match.params;
-    const { total, data, txHash, user } = this.state;
+    const { total, data, txHash, user, isModal, dataIndex } = this.state;
+    let dataItem = null;
+    if (dataIndex >= 0) {
+      dataItem = data[dataIndex];
+    }
     return (
       <Fragment>
         <Row>
@@ -165,7 +171,11 @@ class DiscoverPage extends Component {
                     return (<Colxx xxs="12" xs="6" md="4" lg="3" key={index}>
                       <Card className="mb-2">
                         <CardBody>
-                          <div className="d-flex justify-content-center align-items-center mb-2" style={{ height: "250px", backgroundColor: "transparent" }}>
+                          <div
+                            className="d-flex justify-content-center align-items-center mb-2 cursor-pointer"
+                            style={{ height: "250px", backgroundColor: "transparent" }}
+                            onClick={() => this.setState({ dataIndex: index, isModal: true })}
+                          >
                             {
                               item.ext === 0 ?
                                 (<ReactImageAppear
@@ -196,6 +206,43 @@ class DiscoverPage extends Component {
             </Row>
           </Colxx>
         </Row>
+
+        <Modal isOpen={isModal} size="md">
+          <ModalHeader toggle={() => this.setState({ isModal: false })}>Card Detail</ModalHeader>
+          <ModalBody>
+            <Card className="mb-2">
+              <CardBody>
+                <div
+                  className="d-flex justify-content-center align-items-center mb-2"
+                  style={{ height: "500px", backgroundColor: "transparent" }}
+                >
+                  {
+                    dataItem ? dataItem.ext === 0 ?
+                      (<ReactImageAppear
+                        src={`https://ipfs.io/ipfs/${dataItem.dataLink}`}
+                        className="img-thumbnail mw-100 mh-100"
+                      />) :
+                      (<video src={`https://ipfs.io/ipfs/${dataItem.dataLink}`} loop autoPlay className=" mw-100 mh-100" />)
+                      : ""
+                  }
+                </div>
+                <h4>Name: <strong>{dataItem && dataItem.title}</strong></h4>
+                <h4>Description: <strong>{dataItem && dataItem.description}</strong></h4>
+                <h4>Sold Out/Total: <strong>{dataItem && dataItem.soldOut}/{dataItem && dataItem.totalSupply}</strong></h4>
+                <h4>Price: <strong>{dataItem && dataItem.price}</strong></h4>
+                {
+                  dataItem ?
+                    (user && user === dataItem.userId ?
+                      (<Button color="primary" size="lg" onClick={() => this.handleCardRemove(dataItem.tokenId, dataItem.cardId)}>Remove</Button>) :
+                      mode === 'general' ?
+                        (<Button color="primary" size='lg' onClick={() => { this.handleBuy(dataIndex) }}>Buy</Button>) :
+                        (<Badge>{dataItem.status}</Badge>)) : ""
+                  // (<Badge>My Own Card</Badge>)                              
+                }
+              </CardBody>
+            </Card>
+          </ModalBody>
+        </Modal>
       </Fragment>
     )
   }
