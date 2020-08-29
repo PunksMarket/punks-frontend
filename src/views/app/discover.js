@@ -169,10 +169,10 @@ class DiscoverPage extends Component {
                 data && data.length > 0 ?
                   (data.map((item, index) => {
                     return (<Colxx xxs="12" xs="6" md="4" lg="3" key={index}>
-                      <Card className="mb-2">
+                      <Card className="mb-2 card-media">
                         <CardBody>
                           <div
-                            className="d-flex justify-content-center align-items-center mb-2 cursor-pointer"
+                            className="d-flex justify-content-center align-items-center mb-2 cursor-pointer card-media-content"
                             style={{ height: "250px", backgroundColor: "transparent" }}
                             onClick={() => this.setState({ dataIndex: index, isModal: true })}
                           >
