@@ -8830,3 +8830,9 @@ footer.page-footer {
 .my-collection:hover {
   color: rgba($theme-color-1, 1)
 }
+.card-media:hover {
+  // opacity: 0.3;
+  -moz-box-shadow: 0 0 15px #ccc;
+  -webkit-box-shadow: 0 0 15px #ccc;
+  box-shadow: 0 0 15px #ccc;
+}

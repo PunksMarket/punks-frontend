@@ -4,8 +4,6 @@ const { punksContract } = require('./contracts');
 const { punksCall, punksSend } = require('./utils');
 const config = require('../../config');
 
-const ownerAccount = web3.eth.accounts.privateKeyToAccount(config.PUNKS_OWNER.PRIVATE_KEY);
-
 // Getters
 export const totalTokensCount = async () => {
   const count = await punksCall("totalTokensCount", []);
@@ -40,13 +38,4 @@ export const getMyTokenList = async (owner) => {
     data.push(res);
   }
   return { total: count, data };
-}
-
-export const registerCard = async (params) => {
-  const { dataLink, title, description, totalSupply, price, index } = params;
-  const decimalBN = new BigNumber(10).pow(config.decimals);
-  const priceBN = new BigNumber(price).multipliedBy(decimalBN);
-  const txHash = await punksSend(ownerAccount.privateKey, punksContract.address, "safeMint",
-    [ownerAccount.address, dataLink, description, title, totalSupply, `0x${priceBN.toString(16)}`, index]);
-  return txHash;
 }

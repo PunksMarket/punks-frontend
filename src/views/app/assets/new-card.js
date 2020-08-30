@@ -66,7 +66,7 @@ class NewCardPage extends Component {
   handleFileUpload = () => {
     const { fileData, fileExt, uploading } = this.state;
     if (!fileData) {
-      NotificationManager.warning("Please upload file", "Warning", 3000, null, null, '');
+      NotificationManager.warning("Please upload only image or video file", "Warning", 3000, null, null, '');
       return;
     }
     if (!uploading && fileData) {
