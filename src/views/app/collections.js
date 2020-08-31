@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from "react";
 import { Link } from 'react-router-dom';
 import { connect } from "react-redux";
-import { Row, Col, Card, CardTitle, CardBody, Badge, Alert } from "reactstrap";
+import { Row, Col, Card, CardTitle, CardBody, Badge, Alert, Input, Button } from "reactstrap";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 import moment from 'moment';
@@ -18,7 +18,8 @@ class CollectionsPage extends Component {
     this.state = {
       collections: [],
       isMobile: false,
-      loading: true
+      loading: true,
+      search: '',
     }
   }
 
@@ -34,7 +35,8 @@ class CollectionsPage extends Component {
   fetchAllCollections = async () => {
     try {
       const { address } = this.props;
-      const res = await Api.GetRequest('/collection/all', { address });
+      const { search } = this.state;
+      const res = await Api.GetRequest('/collection/all', { address, search });
       this.setState({
         collections: res.data.data.result,
         user: res.data.data.userId,
@@ -81,6 +83,22 @@ class CollectionsPage extends Component {
               </Colxx>
             </Row>) : ""
         }
+        <Row className="mb-4">
+          <Colxx md="3">
+            <Input
+              placeholder="Search Name"
+              onChange={e => this.setState({ search: e.target.value })}
+              onKeyDown={e => {
+                if (e.key === 'Enter') {
+                  this.fetchAllCollections();
+                }
+              }}
+            />
+          </Colxx>
+          <Colxx md="1">
+            <Button size="sm" color="primary" onClick={() => this.fetchAllCollections()}>Search</Button>
+          </Colxx>
+        </Row>
         <Row className="mb-4">
           {
             collections && collections.length > 0 ?
