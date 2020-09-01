@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
-import { Modal, ModalHeader, ModalBody, Row, Card, CardBody, Button, Badge } from "reactstrap";
+import { Modal, ModalHeader, ModalBody, Row, Card, CardBody, Button, Badge, Input } from "reactstrap";
 import Switch from "rc-switch";
 import { NotificationManager } from '../../components/common/react-notifications';
 import { Colxx, Separator } from "../../components/common/CustomBootstrap";
@@ -21,16 +21,22 @@ class DiscoverPage extends Component {
       user: -1,
       loading: true,
       isModal: false,
-      dataIndex: -1
+      dataIndex: -1,
+      search: '',
     }
   }
   async componentDidMount() {
+    await this.fetchAllCards();
+    this.setState({ loading: false });
+  }
+  fetchAllCards = async () => {
     try {
       const { address } = this.props;
       const { id, mode } = this.props.match.params;
+      const { search } = this.state;
 
       if (!id) return;
-      const res = await Api.GetRequest('/card/collectionId', { id, mode, address });
+      const res = await Api.GetRequest('/card/collectionId', { id, mode, address, search });
       if (res) {
         this.setState({
           data: res.data.data.result,
@@ -40,7 +46,6 @@ class DiscoverPage extends Component {
     } catch (error) {
       console.log(error);
     }
-    this.setState({ loading: false });
   }
   checkEthereum = () => {
     if (typeof window.ethereum === 'undefined') {
@@ -155,11 +160,20 @@ class DiscoverPage extends Component {
             <Separator className="mb-5" />
           </Colxx>
         </Row>
-        <Row>
-          <Colxx xxs="12">
-            <div className="d-flex justify-content-between align-items-center mb-4">
-              {txHash && (<a href={txHash} target="_blank" without="true" rel="noopener noreferrer">Please click here to see transaction hash</a>)}
-            </div>
+        <Row className="mb-4">
+          <Colxx md="3">
+            <Input
+              placeholder="Search..."
+              onChange={e => this.setState({ search: e.target.value })}
+              onKeyDown={e => {
+                if (e.key === 'Enter') {
+                  this.fetchAllCards();
+                }
+              }}
+            />
+          </Colxx>
+          <Colxx md="1">
+            <Button size="sm" color="primary" onClick={() => this.fetchAllCards()}>Search</Button>
           </Colxx>
         </Row>
         <Row>
