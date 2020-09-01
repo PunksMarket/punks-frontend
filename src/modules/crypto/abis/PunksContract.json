@@ -3,7 +3,7 @@
 		"inputs": [
 			{
 				"internalType": "address payable",
-				"name": "_owner",
+				"name": "_admin",
 				"type": "address"
 			}
 		],
@@ -122,13 +122,13 @@
 			{
 				"indexed": true,
 				"internalType": "address",
-				"name": "_from",
+				"name": "fromAddress",
 				"type": "address"
 			},
 			{
 				"indexed": true,
 				"internalType": "address",
-				"name": "_to",
+				"name": "toAddress",
 				"type": "address"
 			}
 		],
@@ -215,6 +215,19 @@
 		],
 		"name": "Update",
 		"type": "event"
+	},
+	{
+		"inputs": [],
+		"name": "admin",
+		"outputs": [
+			{
+				"internalType": "address payable",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
 	},
 	{
 		"inputs": [
@@ -394,7 +407,7 @@
 		"name": "owner",
 		"outputs": [
 			{
-				"internalType": "address payable",
+				"internalType": "address",
 				"name": "",
 				"type": "address"
 			}
@@ -527,6 +540,19 @@
 	{
 		"inputs": [
 			{
+				"internalType": "address payable",
+				"name": "_newAdmin",
+				"type": "address"
+			}
+		],
+		"name": "setAdmin",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
 				"internalType": "address",
 				"name": "operator",
 				"type": "address"
@@ -538,19 +564,6 @@
 			}
 		],
 		"name": "setApprovalForAll",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address payable",
-				"name": "_newOwner",
-				"type": "address"
-			}
-		],
-		"name": "setOwner",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
