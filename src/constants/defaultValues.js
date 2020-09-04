@@ -30,9 +30,9 @@ Color Options:
 "light.purple", "light.blue", "light.green", "light.orange", "light.red", "dark.purple", "dark.blue", "dark.green", "dark.orange", "dark.red"
 */
 export const isMultiColorActive = true;
-export const defaultColor = "light.purple";
+export const defaultColor = "dark.orange";
 export const defaultDirection = "ltr";
 export const isDarkSwitchActive = true;
-export const themeColorStorageKey="__theme_color";
+export const themeColorStorageKey = "__theme_color";
 export const themeRadiusStorageKey = "__theme_radius";
 export const isDemo = false;

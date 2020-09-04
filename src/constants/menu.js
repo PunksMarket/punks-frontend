@@ -21,14 +21,14 @@ export const loginMenuData = [
     to: "/app/assets",
     subs: [
       {
-        icon: "simple-icon-pie-chart",
-        label: "menu.new-card",
-        to: "/app/assets/new-card"
-      },
-      {
         icon: "simple-icon-briefcase",
         label: "menu.my-collections",
         to: "/app/assets/my-collections"
+      },
+      {
+        icon: "simple-icon-pie-chart",
+        label: "menu.new-card",
+        to: "/app/assets/new-card"
       },
       {
         icon: "iconsminds-library",
