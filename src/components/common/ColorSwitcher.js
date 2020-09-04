@@ -12,7 +12,7 @@ class ColorSwitcher extends Component {
     this.state = {
       isOpen: false,
       selectedColor: localStorage.getItem(themeColorStorageKey),
-      radius: localStorage.getItem(themeRadiusStorageKey) || 'rounded'
+      radius: localStorage.getItem(themeRadiusStorageKey) || 'flat'
     };
     this.removeEvents();
   }
@@ -89,7 +89,7 @@ class ColorSwitcher extends Component {
                 href={`#light.${color}`}
                 className={`theme-color theme-color-${color} ${
                   selectedColor === `light.${color}` ? 'active' : ''
-                }`}
+                  }`}
                 onClick={e => this.changeThemeColor(e, `light.${color}`)}
               >
                 <span>`light.${color}`</span>
@@ -104,7 +104,7 @@ class ColorSwitcher extends Component {
                 href={`#dark.${color}`}
                 className={`theme-color theme-color-${color} ${
                   selectedColor === `dark.${color}` ? 'active' : ''
-                }`}
+                  }`}
                 onClick={e => this.changeThemeColor(e, `dark.${color}`)}
               >
                 <span>`dark.${color}`</span>

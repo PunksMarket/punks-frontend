@@ -44,7 +44,7 @@ module.exports = {
   "menu.blank-page": "Blank Page",
   "menu.collections": "Collections",
   "menu.assets": "Assets",
-  "menu.my-collections": "My Collections",
+  "menu.my-collections": "New Collections",
   "menu.new-card": "New Card",
   "menu.chain-discover": "Cards on chain",
   "menu.collection": "Collection",
