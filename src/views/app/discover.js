@@ -6,7 +6,9 @@ import { NotificationManager } from '../../components/common/react-notifications
 import { Colxx, Separator } from "../../components/common/CustomBootstrap";
 import Breadcrumb from "../../containers/navs/Breadcrumb";
 import ReactImageAppear from 'react-image-appear';
+import { BigNumber } from 'bignumber.js';
 import * as Api from '../../utils/api';
+import { sendTransaction } from '../../modules/metamask';
 
 const { punks } = require('../../modules/crypto');
 const { punksContract } = require('../../modules/crypto/contracts');
@@ -72,33 +74,16 @@ class DiscoverPage extends Component {
     const { data } = this.state;
     const web3 = window.web3;
     if (web3 && address) {
-      window.ethereum.enable()
-        .then(async (res) => {
-          const encodedABI = punksContract.contract.methods["buy"](data[index].tokenId, 1).encodeABI();
-          const gasPrice = await web3.eth.getGasPrice();
+      const encodedABI = punksContract.contract.methods["buy"](data[index].tokenId, 1).encodeABI();
 
-          const wei = web3.utils.toWei(data[index].price.toString(), 'ether');
+      const wei = `0x${(BigNumber(web3.utils.toWei(data[index].price.toString(), 'ether'))).toString(16)}`;
+      console.log('wei :>> ', wei);
 
-          const tx = {
-            to: punksContract.address,
-            value: wei,
-            gas: 4000000,
-            gasPrice: gasPrice,
-            chainId: 3,
-            from: address,
-            data: encodedABI,
-          };
-          web3.eth.sendTransaction(tx)
-            .once('transactionHash', async (hash) => {
-              console.log('hash :>> ', hash);
-              await Api.PostRequest('/transaction/create', { address, txHash: hash, type: 'Buy' });
-              NotificationManager.success('You requested to buy card', "Success", 3000, null, null, '');
-            })
-            .once('receipt', receipt => { })
-            .catch((err) => { });
-        })
-        .catch(error => {
-        });
+      const hash = await sendTransaction(address, punksContract.address, encodedABI, wei);
+      if (hash) {
+        await Api.PostRequest('/transaction/create', { address, txHash: hash, type: 'Buy' });
+        NotificationManager.success('You requested to buy card', "Success", 3000, null, null, '');
+      }
     }
   }
   handleCardEdit = async (tokenId, cardId) => {
@@ -113,31 +98,12 @@ class DiscoverPage extends Component {
     const { data } = this.state;
     const web3 = window.web3;
     if (web3 && address) {
-      window.ethereum.enable()
-        .then(async (res) => {
-          const encodedABI = punksContract.contract.methods["burn"](address, tokenId).encodeABI();
-          const gasPrice = await web3.eth.getGasPrice();
-          const tx = {
-            to: punksContract.address,
-            value: 0,
-            gas: 4000000,
-            gasPrice: gasPrice,
-            chainId: 3,
-            from: address,
-            data: encodedABI,
-          };
-          web3.eth.sendTransaction(tx)
-            .once('transactionHash', async (hash) => {
-              console.log('hash :>> ', hash);
-              await Api.PostRequest('/transaction/create', { address, txHash: hash, type: 'Burn' });
-              NotificationManager.success('You requested to delete card', "Success", 3000, null, null, '');
-            })
-            .once('receipt', receipt => { console.log('receipt :>> ', receipt); })
-            .catch((err) => { });
-        })
-        .catch(error => {
-          console.log('error :>> ', error);
-        });
+      const encodedABI = punksContract.contract.methods["burn"](address, tokenId).encodeABI();
+      const hash = await sendTransaction(address, punksContract.address, encodedABI);
+      if (hash) {
+        await Api.PostRequest('/transaction/create', { address, txHash: hash, type: 'Burn' });
+        NotificationManager.success('You requested to delete card', "Success", 3000, null, null, '');
+      }
     }
   }
 
