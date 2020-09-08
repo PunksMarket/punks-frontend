@@ -9,6 +9,7 @@ import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 import * as Api from "../../../utils/api";
 import extractErrors from '../../../utils/error';
+import { sendTransaction } from '../../../modules/metamask';
 
 const config = require('../../../config');
 const BigNumber = require('bignumber.js');
@@ -120,55 +121,25 @@ class NewCardPage extends Component {
     this.setState(
       { submitting: true },
       async () => {
-        try {
-          const web3 = window.web3;
-          if (web3 && address) {
-            window.ethereum.enable()
-              .then(async (res) => {
-                const { dataLink, title, description, totalSupply, price } = values;
-                const decimalBN = new BigNumber(10).pow(config.decimals);
-                const priceBN = new BigNumber(price).multipliedBy(decimalBN);
+        const web3 = window.web3;
+        if (web3 && address) {
+          const { dataLink, title, description, totalSupply, price } = values;
+          const decimalBN = new BigNumber(10).pow(config.decimals);
+          const priceBN = new BigNumber(price).multipliedBy(decimalBN);
 
-                const encodedABI = punksContract.contract.methods['safeMint'](
-                  address, dataLink, title, description, totalSupply, `0x${priceBN.toString(16)}`, values.collection.id, ipfsExt
-                ).encodeABI();
-                const gasPrice = await web3.eth.getGasPrice();
+          const encodedABI = punksContract.contract.methods['safeMint'](
+            address, dataLink, title, description, totalSupply, `0x${priceBN.toString(16)}`, values.collection.id, ipfsExt
+          ).encodeABI();
 
-                const tx = {
-                  to: punksContract.address,
-                  gas: 4000000,
-                  gasPrice: gasPrice,
-                  chainId: 3,
-                  from: address,
-                  data: encodedABI,
-                };
-                web3.eth.sendTransaction(tx)
-                  .on('error', (err) => {
-                    console.log('reject err : ', err);
-                  })
-                  .once('transactionHash', async (hash) => {
-                    try {
-                      await Api.PostRequest('/transaction/create', { address, txHash: hash, type: 'Register' });
-                      NotificationManager.success("Transaction is created to register new card", "success", 3000, null, null, '');
-                    } catch (err) {
-                      console.log(err);
-                    }
-                    this.setState({ submitting: false });
-                  })
-                  .once('receipt', receipt => { // eslint-disable-line
-                    // console.log('reciept', receipt);
-                  });
-              })
-              .catch(error => {
-                console.log('error :>> ', error);
-                this.setState({ submitting: false });
-              });
+          const hash = await sendTransaction(address, punksContract.address, encodedABI);
+
+          if (hash) {
+            await Api.PostRequest('/transaction/create', { address, txHash: hash, type: 'Register' });
+            NotificationManager.success("Transaction is created to register new card", "success", 3000, null, null, '');
           }
-        } catch (error) {
-          console.log('error :>> ', error);
           this.setState({ submitting: false });
         }
-      });
+      })
   };
 
   render() {
