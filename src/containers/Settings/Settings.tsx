@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import SettingsCard from 'components/SettingsCard/SettingsCard';
 import { useDrawerDispatch } from 'context/DrawerContext';
-import { STAFF_MEMBERS, SITE_SETTINGS } from 'settings/constants';
+// import { STAFF_MEMBERS, SITE_SETTINGS } from 'settings/constants';
 import { withStyle } from 'baseui';
 
 import { SiteSettings } from 'assets/icons/SiteSettings';
@@ -57,7 +57,7 @@ export default function Settings() {
             icon={<Members />}
             title="Staff Members"
             subtitle="Manage your employees and their permission"
-            onClick={() => history.push(STAFF_MEMBERS)}
+            onClick={() => history.push('/')}
           />
         </Col>
         <Col md={6}>
@@ -65,7 +65,7 @@ export default function Settings() {
             icon={<SiteSettings />}
             title="Site Settings"
             subtitle="View and update your site settings"
-            onClick={() => history.push(SITE_SETTINGS)}
+            onClick={() => history.push('/')}
           />
         </Col>
       </Row>

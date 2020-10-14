@@ -20,16 +20,17 @@ function PrivateRoute({ children, ...rest }) {
     <Route
       {...rest}
       render={({ location }) =>
-          !!address ? (
           children
-        ) : (
-          <Redirect
-            to={{
-              pathname: '/',
-              state: { from: location },
-            }}
-          />
-        )
+        //   !!address ? (
+        //   children
+        // ) : (
+        //   <Redirect
+        //     to={{
+        //       pathname: '/',
+        //       state: { from: location },
+        //     }}
+        //   />
+        // )
       }
     />
   );
