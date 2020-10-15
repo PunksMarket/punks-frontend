@@ -1,0 +1,2 @@
+Conditions:
+  IsProd: !Equals [ !Ref Stage, prod ]

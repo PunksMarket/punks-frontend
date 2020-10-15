@@ -1,0 +1,25 @@
+Parameters:
+  DomainName:
+    Type: String
+    Default: ${self:custom.domains.${self:custom.stage}}
+  Stage:
+    Type: String
+    Default: ${self:provider.stage}
+    AllowedValues:
+      - prod
+      - dev
+  DefaultRootObject:
+    Type: String
+    Default: index.html
+  ErrorPagePath:
+    Type: String
+    Default: /index.html
+  AcmCertificateArn:
+    Type: String
+    Default: arn:aws:acm:us-east-1:574184679067:certificate/6d8ad882-9078-40f6-b357-50ae4be03679
+  HostingBucketName:
+    Type: String
+    Default: ${self:custom.prefix}-hosting-bucket
+  RedirectBucketName:
+    Type: String
+    Default: ${self:custom.prefix}-redirect-bucket
