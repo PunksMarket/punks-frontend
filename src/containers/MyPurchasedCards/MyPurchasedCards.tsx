@@ -15,7 +15,6 @@ import {useDrawerDispatch, useDrawerState} from "../../context/DrawerContext";
 import extractErrors from '../../utils/error';
 import * as HTTP from "../../utils/http";
 import {AuthContext} from "../../context/auth";
-import {SearchIcon} from "../../assets/icons/SearchIcon";
 
 export const Col = withStyle(Column, () => ({
     '@media only screen and (max-width: 767px)': {
@@ -46,34 +45,25 @@ export const LoaderItem = styled('div', () => ({
     marginBottom: '30px',
 }));
 
-export default function Collections() {
-
-    const [collectionList, setCollectionList] = useState(null);
-    const [search, setSearch] = useState('');
+export default function MyPurchasedCards() {
+    const [cardList, setCardList] = useState([]);
     const {address} = useContext(AuthContext);
 
     useEffect(() => {
-        fetchCollections(address, '').then();
+        fetchCards(address).then();
     }, [address]);
 
-    async function fetchCollections(address, search) {
-        setCollectionList(null);
+    async function fetchCards(address) {
+        setCardList([]);
         try {
-            const res = await HTTP.GetRequest(API.COLLECTIONS_ALL_get, {address, search});
-            setCollectionList(res.data.data.result);
+            if (address) {
+                const res = await HTTP.GetRequest(API.MY_CARDS_get, {address});
+                setCardList(res.data.data.result);
+            }
         } catch (error) {
             const errorMsg = extractErrors(error);
             console.log(errorMsg[0]);
         }
-    }
-
-    function handleSearch(event) {
-        const q = event.currentTarget.value;
-        setSearch(q);
-    }
-
-    function onSearchBtnClick(event) {
-        fetchCollections(address, search).then();
     }
 
     return (
@@ -81,50 +71,15 @@ export default function Collections() {
             <Row>
                 <Col md={12}>
                     <Header style={{marginBottom: 8}}>
-                        <Col md={2} xs={12}>
-                            <Heading>Collections</Heading>
-                        </Col>
-
-                        <Col md={10}>
-                            <Row>
-                                <Col md={7} lg={7} sm={12}>
-                                    <Input
-                                        value={search}
-                                        placeholder="Search By Collection Name"
-                                        onChange={handleSearch}
-                                        clearable
-                                        disabled={!(collectionList && collectionList.length)}
-                                    />
-                                </Col>
-
-                                <Col md={5} lg={5} sm={12}>
-                                    <Button
-                                        onClick={onSearchBtnClick}
-                                        startEnhancer={() => <SearchIcon/>}
-                                        disabled={!(collectionList && collectionList.length)}
-                                        overrides={{
-                                            BaseButton: {
-                                                style: () => ({
-                                                    width: '100%',
-                                                    borderTopLeftRadius: '3px',
-                                                    borderTopRightRadius: '3px',
-                                                    borderBottomLeftRadius: '3px',
-                                                    borderBottomRightRadius: '3px',
-                                                }),
-                                            },
-                                        }}
-                                    >
-                                        Search
-                                    </Button>
-                                </Col>
-                            </Row>
+                        <Col md={4} xs={12}>
+                            <Heading>My Purchased Cards</Heading>
                         </Col>
                     </Header>
 
                     <Row>
-                        {collectionList ? (
-                            collectionList && collectionList.length !== 0 ? (
-                                collectionList.map((item: any, index: number) => (
+                        {cardList ? (
+                            cardList && cardList.length !== 0 ? (
+                                cardList.map((item: any, index: number) => (
                                     <Col
                                         md={4}
                                         lg={3}
@@ -138,20 +93,19 @@ export default function Collections() {
                                                 title={item.name}
                                                 dateTime={item.createdAt}
                                                 tokenCount={item.tokenCount}
-                                                data={{...item, fetchCollections}}
+                                                data={{item}}
                                             />
                                         </Fade>
                                     </Col>
                                 ))
                             ) : (
                                 <NoResult
-                                    msg={'No collection found :('}
+                                    msg={'No card found :('}
                                     hideButton={false}
                                     style={{
-                                        gridColumnStart: '1',
-                                        gridColumnEnd: 'one',
                                         height: '10vw'
-                                    }}/>
+                                    }}
+                                />
                             )
                         ) : (
                             <LoaderWrapper>

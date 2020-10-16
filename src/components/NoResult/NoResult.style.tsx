@@ -23,7 +23,7 @@ export const NoResultWrapper = styled('div', () => ({
 }));
 
 export const ImageWrapper = styled('div', () => ({
-  marginTop: '50px',
+  marginTop: '0px',
   width: '100%',
   maxWidth: '600px',
   display: 'flex',
