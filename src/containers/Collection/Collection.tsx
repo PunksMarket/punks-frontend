@@ -8,13 +8,15 @@ import {Header, Heading} from 'components/Wrapper.style';
 import Fade from 'react-reveal/Fade';
 import CollectionCard from 'components/CollectionCard/CollectionCard';
 import NoResult from 'components/NoResult/NoResult';
-import {API, COLLECTION_MODE, CURRENCY} from 'settings/constants';
+import {API, COLLECTIONS, CURRENCY, MY_COLLECTIONS} from 'settings/constants';
 import Placeholder from 'components/Placeholder/Placeholder';
 import {Plus} from "../../assets/icons/Plus";
 import {useDrawerDispatch, useDrawerState} from "../../context/DrawerContext";
 import extractErrors from '../../utils/error';
 import * as HTTP from "../../utils/http";
 import {AuthContext} from "../../context/auth";
+import {SearchIcon} from "../../assets/icons/SearchIcon";
+import {useParams, useHistory} from "react-router-dom";
 
 export const Col = withStyle(Column, () => ({
     '@media only screen and (max-width: 767px)': {
@@ -45,32 +47,30 @@ export const LoaderItem = styled('div', () => ({
     marginBottom: '30px',
 }));
 
-export default function NewCollections() {
-    const [collectionList, setCollectionList] = useState(null);
-    const [collectionListFiltered, setCollectionListFiltered] = useState(null);
+export default function Collection() {
+
+    let params: any = useParams();
+    let history = useHistory();
+
+    if (!(params && params.id && params.mode)) {
+        history.push(MY_COLLECTIONS);
+    }
+
+    const {id, mode} = params;
+
+    const [collectionList, setCollectionList] = useState([]);
     const [search, setSearch] = useState('');
     const {address} = useContext(AuthContext);
 
-    const dispatch = useDrawerDispatch();
-    const openDrawer = useCallback(
-        () => dispatch(
-            {type: 'OPEN_DRAWER', drawerComponent: 'COLLECTION_FORM', data: {fetchCollections}}),
-        [dispatch]);
-
     useEffect(() => {
-        fetchCollections(address).then();
-    }, [address]);
+        fetchCollection({address, search: '', id, mode}).then();
+    }, [address, id, mode]);
 
-    async function fetchCollections(address) {
-        setCollectionList(null);
-        setCollectionListFiltered(null);
+    async function fetchCollection({address, search, id, mode}) {
+        setCollectionList([]);
         try {
-            if (address) {
-                const res = await HTTP.GetRequest(API.MY_COLLECTIONS_get, {address});
-                res.data.data.result.map(_ => _.mode = COLLECTION_MODE.ALL);
-                setCollectionList(res.data.data.result);
-                setCollectionListFiltered(res.data.data.result);
-            }
+            const res = await HTTP.GetRequest(API.COLLECTION, {search, id, mode, address});
+            setCollectionList(res.data.data.result);
         } catch (error) {
             const errorMsg = extractErrors(error);
             console.log(errorMsg[0]);
@@ -80,8 +80,10 @@ export default function NewCollections() {
     function handleSearch(event) {
         const q = event.currentTarget.value;
         setSearch(q);
-        setCollectionListFiltered(
-            collectionList.filter((c) => c.name.toLowerCase().includes(q.toLowerCase()) ? c : ''));
+    }
+
+    function onSearchBtnClick(event) {
+        fetchCollection({address, search, id, mode}).then();
     }
 
     return (
@@ -90,7 +92,7 @@ export default function NewCollections() {
                 <Col md={12}>
                     <Header style={{marginBottom: 8}}>
                         <Col md={2} xs={12}>
-                            <Heading>New Collections</Heading>
+                            <Heading>Collection</Heading>
                         </Col>
 
                         <Col md={10}>
@@ -107,8 +109,9 @@ export default function NewCollections() {
 
                                 <Col md={5} lg={5} sm={12}>
                                     <Button
-                                        onClick={openDrawer}
-                                        startEnhancer={() => <Plus/>}
+                                        onClick={onSearchBtnClick}
+                                        startEnhancer={() => <SearchIcon/>}
+                                        disabled={!(collectionList && collectionList.length)}
                                         overrides={{
                                             BaseButton: {
                                                 style: () => ({
@@ -121,7 +124,7 @@ export default function NewCollections() {
                                             },
                                         }}
                                     >
-                                        Create New Collection
+                                        Search
                                     </Button>
                                 </Col>
                             </Row>
@@ -129,9 +132,9 @@ export default function NewCollections() {
                     </Header>
 
                     <Row>
-                        {collectionListFiltered ? (
-                            collectionListFiltered && collectionListFiltered.length !== 0 ? (
-                                collectionListFiltered.map((item: any, index: number) => (
+                        {collectionList ? (
+                            collectionList && collectionList.length !== 0 ? (
+                                collectionList.map((item: any, index: number) => (
                                     <Col
                                         md={4}
                                         lg={3}
@@ -145,13 +148,20 @@ export default function NewCollections() {
                                                 title={item.name}
                                                 dateTime={item.createdAt}
                                                 tokenCount={item.tokenCount}
-                                                data={{...item, fetchCollections}}
+                                                data={{...item, fetchCollection}}
                                             />
                                         </Fade>
                                     </Col>
                                 ))
                             ) : (
-                                <NoResult/>
+                                <NoResult
+                                    msg={'No collection found :('}
+                                    hideButton={false}
+                                    style={{
+                                        gridColumnStart: '1',
+                                        gridColumnEnd: 'one',
+                                        height: '10vw'
+                                    }}/>
                             )
                         ) : (
                             <LoaderWrapper>

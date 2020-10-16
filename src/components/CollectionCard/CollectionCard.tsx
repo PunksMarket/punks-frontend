@@ -1,4 +1,6 @@
 import React, {useState} from 'react';
+import { useHistory } from "react-router-dom";
+
 import {
   ProductCardWrapper,
   ProductInfo,
@@ -13,6 +15,7 @@ import moment from 'moment';
 import {PencilIcon} from "../../assets/icons/PencilIcon";
 import Popover, { PLACEMENT } from 'components/Popover/Popover';
 import {EllipsisIcon} from "../../assets/icons/EllipsisIcon";
+import {COLLECTION, COLLECTION_MODE} from "../../settings/constants";
 
 type ProductCardProps = {
   title: string;
@@ -29,6 +32,7 @@ const CollectionCard: React.FC<ProductCardProps> = ({
   ...props
 }) => {
 
+  const history = useHistory();
   const dispatch = useDrawerDispatch();
   const openDrawer = React.useCallback(
     () =>
@@ -41,7 +45,8 @@ const CollectionCard: React.FC<ProductCardProps> = ({
   );
 
   function onCollectionClick() {
-    console.log(data);
+    const url = COLLECTION.split('/')[1] + '/' + data.id + '/' + data.mode;
+    history.push(url);
   }
 
   return (

@@ -1,6 +1,7 @@
 import React, { useContext, lazy, Suspense } from 'react';
 import { Route, Switch, Redirect } from 'react-router-dom';
 import {
+  COLLECTION,
   COLLECTIONS,
   MY_COLLECTIONS, MY_PURCHASED_CARDS, NEW_CARD, TRANSACTIONS,
 } from 'settings/constants';
@@ -11,6 +12,7 @@ const NotFound = lazy(() => import('containers/NotFound/NotFound'));
 
 const Collections = lazy(() => import('containers/Collections/Collections'));
 const NewCollections = lazy(() => import('containers/NewCollections/NewCollections'));
+const Collection = lazy(() => import('containers/Collection/Collection'));
 const NewCard = lazy(() => import('containers/NewCardForm/NewCardForm'));
 const MyPurchasedCards = lazy(() => import('containers/MyPurchasedCards/MyPurchasedCards'));
 const Transactions = lazy(() => import('containers/Transactions/Transactions'));
@@ -49,6 +51,14 @@ const Routes = () => {
                 <AdminLayout>
                   <Suspense fallback={<InLineLoader />}>
                     <NewCollections />
+                  </Suspense>
+                </AdminLayout>
+              </PrivateRoute>
+
+              <PrivateRoute path={COLLECTION}>
+                <AdminLayout>
+                  <Suspense fallback={<InLineLoader />}>
+                    <Collection />
                   </Suspense>
                 </AdminLayout>
               </PrivateRoute>
