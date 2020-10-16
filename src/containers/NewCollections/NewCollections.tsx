@@ -15,6 +15,7 @@ import {useDrawerDispatch, useDrawerState} from "../../context/DrawerContext";
 import extractErrors from '../../utils/error';
 import * as HTTP from "../../utils/http";
 import {AuthContext} from "../../context/auth";
+import DrawerItems from "../DrawerItems/DrawerItems";
 
 export const Col = withStyle(Column, () => ({
     '@media only screen and (max-width: 767px)': {

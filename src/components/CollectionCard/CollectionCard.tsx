@@ -39,10 +39,16 @@ const CollectionCard: React.FC<ProductCardProps> = ({
       }),
     [dispatch, data]
   );
+
+  function onCollectionClick() {
+    console.log(data);
+  }
+
   return (
     <ProductCardWrapper
       {...props}
       className="product-card"
+      onClick={onCollectionClick}
     >
       <ProductInfo>
 

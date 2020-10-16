@@ -1,6 +1,5 @@
 import { styled } from 'baseui';
 import Images from '../Image/Image';
-import {NavLink as RRNavLink} from "react-router-dom";
 
 export const ProductCardWrapper = styled('div', ({ $theme }) => ({
   height: '100%',
