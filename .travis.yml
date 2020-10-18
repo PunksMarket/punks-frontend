@@ -1,0 +1,44 @@
+language: node_js
+
+node_js:
+  - 12
+
+cache:
+  yarn: true
+  directories:
+    - node_modules
+
+git:
+  depth: 1
+
+before_install:
+  - pyenv global 3.7
+  - pip3 install --quiet awscli
+  - aws --version
+  - yarn global add serverless
+
+jobs:
+  include:
+
+    - name: "web"
+      install:
+        - yarn install --production=false
+      deploy:
+        - provider: script
+          script: >-
+            yarn build;
+            sls -v deploy;
+            sls -v syncToS3;
+            sls -v invalidateCloudFrontCache;
+          skip_cleanup: true
+          on:
+            branch: staging
+        - provider: script
+          script: >-
+            yarn build;
+            sls -v -s prod deploy;
+            sls -v -s prod syncToS3;
+            sls -v -s prod invalidateCloudFrontCache;
+          skip_cleanup: true
+          on:
+            branch: master

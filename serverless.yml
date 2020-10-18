@@ -1,0 +1,25 @@
+service: punks-frontend
+
+plugins:
+  - single-page-app
+  - serverless-pseudo-parameters
+
+custom:
+  stage: ${self:provider.stage}
+  prefix: ${self:service}-${self:provider.stage}
+  distributionPath: ./build
+  domains:
+    prod: cypherpunks.co.uk
+    dev: staging.cypherpunks.co.uk
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  stage: ${opt:stage, 'dev'}
+  region: eu-west-2
+
+resources:
+  - ${file(resources/parameters.yml)}
+  - ${file(resources/conditions.yml)}
+  - ${file(resources/spa.yml)}
+  - ${file(resources/spa-redirect.yml)}
