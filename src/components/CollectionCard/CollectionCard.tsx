@@ -8,7 +8,7 @@ import {
   ProductWeight,
   ProductMeta,
   ProductPriceWrapper,
-  ProductPrice, MenuDropdownItem, MenuOption,
+  ProductPrice, MenuDropdownItem, MenuOption, EllipsisIconWrapper,
 } from './CollectionCard.style';
 import { useDrawerDispatch } from 'context/DrawerContext';
 import moment from 'moment';
@@ -53,7 +53,6 @@ const CollectionCard: React.FC<ProductCardProps> = ({
     <ProductCardWrapper
       {...props}
       className="product-card"
-      onClick={onCollectionClick}
     >
       <ProductInfo>
 
@@ -79,12 +78,12 @@ const CollectionCard: React.FC<ProductCardProps> = ({
             },
           }}
         >
-          <span style={{float: 'right', opacity: 0.5}}>
+          <EllipsisIconWrapper>
             <EllipsisIcon />
-          </span>
+          </EllipsisIconWrapper>
         </Popover>
 
-        <ProductTitle>{title}</ProductTitle>
+        <ProductTitle onClick={onCollectionClick}>{title}</ProductTitle>
         <ProductWeight>{moment(dateTime).format("MM/DD/YYYY hh:mm")}</ProductWeight>
         <ProductMeta>
           <ProductPriceWrapper>
