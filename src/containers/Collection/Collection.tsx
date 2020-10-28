@@ -8,7 +8,7 @@ import {Header, Heading} from 'components/Wrapper.style';
 import Fade from 'react-reveal/Fade';
 import CollectionCard from 'components/CollectionCard/CollectionCard';
 import NoResult from 'components/NoResult/NoResult';
-import {API, CURRENCY} from 'settings/constants';
+import {API, COLLECTIONS, CURRENCY, MY_COLLECTIONS} from 'settings/constants';
 import Placeholder from 'components/Placeholder/Placeholder';
 import {Plus} from "../../assets/icons/Plus";
 import {useDrawerDispatch, useDrawerState} from "../../context/DrawerContext";
@@ -16,6 +16,7 @@ import extractErrors from '../../utils/error';
 import * as HTTP from "../../utils/http";
 import {AuthContext} from "../../context/auth";
 import {SearchIcon} from "../../assets/icons/SearchIcon";
+import {useParams, useHistory} from "react-router-dom";
 
 export const Col = withStyle(Column, () => ({
     '@media only screen and (max-width: 767px)': {
@@ -46,20 +47,29 @@ export const LoaderItem = styled('div', () => ({
     marginBottom: '30px',
 }));
 
-export default function Collections() {
+export default function Collection() {
 
-    const [collectionList, setCollectionList] = useState(null);
+    let params: any = useParams();
+    let history = useHistory();
+
+    if (!(params && params.id && params.mode)) {
+        history.push(MY_COLLECTIONS);
+    }
+
+    const {id, mode} = params;
+
+    const [collectionList, setCollectionList] = useState([]);
     const [search, setSearch] = useState('');
     const {address} = useContext(AuthContext);
 
     useEffect(() => {
-        fetchCollections(address, '').then();
-    }, [address]);
+        fetchCollection({address, search: '', id, mode}).then();
+    }, [address, id, mode]);
 
-    async function fetchCollections(address, search) {
-        setCollectionList(null);
+    async function fetchCollection({address, search, id, mode}) {
+        setCollectionList([]);
         try {
-            const res = await HTTP.GetRequest(API.COLLECTIONS_ALL_get, {address, search});
+            const res = await HTTP.GetRequest(API.COLLECTION, {search, id, mode, address});
             setCollectionList(res.data.data.result);
         } catch (error) {
             const errorMsg = extractErrors(error);
@@ -73,7 +83,7 @@ export default function Collections() {
     }
 
     function onSearchBtnClick(event) {
-        fetchCollections(address, search).then();
+        fetchCollection({address, search, id, mode}).then();
     }
 
     return (
@@ -82,7 +92,7 @@ export default function Collections() {
                 <Col md={12}>
                     <Header style={{marginBottom: 8}}>
                         <Col md={2} xs={12}>
-                            <Heading>Collections</Heading>
+                            <Heading>Collection</Heading>
                         </Col>
 
                         <Col md={10}>
@@ -138,7 +148,7 @@ export default function Collections() {
                                                 title={item.name}
                                                 dateTime={item.createdAt}
                                                 tokenCount={item.tokenCount}
-                                                data={{...item, fetchCollections}}
+                                                data={{...item, fetchCollection}}
                                             />
                                         </Fade>
                                     </Col>

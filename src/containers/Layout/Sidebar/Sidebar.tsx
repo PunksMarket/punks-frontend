@@ -3,11 +3,12 @@ import {withRouter} from 'react-router-dom';
 import {
     SidebarWrapper,
     NavLink,
+    NavLinkDummy,
     MenuWrapper,
     Svg,
 } from './Sidebar.style';
 import {
-    MY_COLLECTIONS, NEW_CARD, COLLECTIONS,
+    MY_COLLECTIONS, NEW_CARD, COLLECTIONS, MY_PURCHASED_CARDS, TRANSACTIONS,
 } from 'settings/constants';
 
 import {DashboardIcon} from 'assets/icons/DashboardIcon';
@@ -27,6 +28,9 @@ const sidebarMenusVerified = [
         icon: <DashboardIcon/>,
     },
     {
+        name: 'Assets',
+    },
+    {
         name: 'New Collections',
         path: MY_COLLECTIONS,
         exact: false,
@@ -35,6 +39,18 @@ const sidebarMenusVerified = [
     {
         name: 'New Card',
         path: NEW_CARD,
+        exact: false,
+        icon: <ProductIcon/>,
+    },
+    {
+        name: 'My Purchased Cards',
+        path: MY_PURCHASED_CARDS,
+        exact: false,
+        icon: <ProductIcon/>,
+    },
+    {
+        name: 'Transactions',
+        path: TRANSACTIONS,
         exact: false,
         icon: <ProductIcon/>,
     },
@@ -55,28 +71,33 @@ export default withRouter(function Sidebar({refs, style, onMenuItemClick}: any) 
     const sidebarMenus = useRef([]);
 
     useEffect(() => {
-        sidebarMenus.current = address ? sidebarMenusVerified: sidebarMenusDefault;
+        sidebarMenus.current = address ? sidebarMenusVerified : sidebarMenusDefault;
     });
-
 
     return (
         <SidebarWrapper ref={refs} style={style}>
             <MenuWrapper>
                 {sidebarMenus.current.map((menu: any, index: number) => (
-                    <NavLink
-                        to={menu.path}
-                        key={index}
-                        exact={menu.exact}
-                        activeStyle={{
-                            color: '#00C58D',
-                            backgroundColor: '#f7f7f7',
-                            borderRadius: '50px 0 0 50px',
-                        }}
-                        onClick={onMenuItemClick}
-                    >
-                        {menu.icon ? <Svg>{menu.icon}</Svg> : ''}
-                        {menu.name}
-                    </NavLink>
+                    !menu.path ? (
+                        <NavLinkDummy key={index}>
+                            {menu.icon ? <Svg>{menu.icon}</Svg> : ''}
+                            {menu.name}
+                        </NavLinkDummy>
+                    ) : (
+                        <NavLink
+                            to={menu.path}
+                            key={index}
+                            exact={menu.exact}
+                            activeStyle={{
+                                color: '#00C58D',
+                                backgroundColor: '#f7f7f7',
+                                borderRadius: '50px 0 0 50px',
+                            }}
+                        >
+                            {menu.icon ? <Svg>{menu.icon}</Svg> : ''}
+                            {menu.name}
+                        </NavLink>
+                    )
                 ))}
             </MenuWrapper>
         </SidebarWrapper>

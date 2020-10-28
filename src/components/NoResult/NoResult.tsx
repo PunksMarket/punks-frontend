@@ -6,6 +6,7 @@ import Button from "../Button/Button";
 
 type NoResultProps = {
   id?: string;
+  msg?: string;
   onClick?: () => void;
   hideButton?: boolean;
   style?: any;
@@ -13,13 +14,14 @@ type NoResultProps = {
 
 const NoResult: React.FC<NoResultProps> = ({
   id,
+  msg,
   onClick,
   hideButton = true,
   style
 }) => {
   return (
     <NoResultWrapper id={id} style={style}>
-      <h3>Sorry, No result found :(</h3>
+      <h3>{msg ? msg : ('Sorry, No result found :(')}</h3>
 
       <ImageWrapper>
         <img src={NoResultSvg} alt="No Result" />

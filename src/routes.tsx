@@ -1,8 +1,9 @@
 import React, { useContext, lazy, Suspense } from 'react';
 import { Route, Switch, Redirect } from 'react-router-dom';
 import {
+  COLLECTION,
   COLLECTIONS,
-  MY_COLLECTIONS, NEW_CARD,
+  MY_COLLECTIONS, MY_PURCHASED_CARDS, NEW_CARD, TRANSACTIONS,
 } from 'settings/constants';
 import AuthProvider, { AuthContext } from 'context/auth';
 import { InLineLoader } from 'components/InlineLoader/InlineLoader';
@@ -11,7 +12,10 @@ const NotFound = lazy(() => import('containers/NotFound/NotFound'));
 
 const Collections = lazy(() => import('containers/Collections/Collections'));
 const NewCollections = lazy(() => import('containers/NewCollections/NewCollections'));
+const Collection = lazy(() => import('containers/Collection/Collection'));
 const NewCard = lazy(() => import('containers/NewCardForm/NewCardForm'));
+const MyPurchasedCards = lazy(() => import('containers/MyPurchasedCards/MyPurchasedCards'));
+const Transactions = lazy(() => import('containers/Transactions/Transactions'));
 
 function PrivateRoute({ children, ...rest }) {
   const { address } = useContext(AuthContext);
@@ -51,10 +55,34 @@ const Routes = () => {
                 </AdminLayout>
               </PrivateRoute>
 
+              <PrivateRoute path={COLLECTION}>
+                <AdminLayout>
+                  <Suspense fallback={<InLineLoader />}>
+                    <Collection />
+                  </Suspense>
+                </AdminLayout>
+              </PrivateRoute>
+
               <PrivateRoute path={NEW_CARD}>
                 <AdminLayout>
                   <Suspense fallback={<InLineLoader />}>
                     <NewCard />
+                  </Suspense>
+                </AdminLayout>
+              </PrivateRoute>
+
+              <PrivateRoute path={MY_PURCHASED_CARDS}>
+                <AdminLayout>
+                  <Suspense fallback={<InLineLoader />}>
+                    <MyPurchasedCards />
+                  </Suspense>
+                </AdminLayout>
+              </PrivateRoute>
+
+              <PrivateRoute path={TRANSACTIONS}>
+                <AdminLayout>
+                  <Suspense fallback={<InLineLoader />}>
+                    <Transactions />
                   </Suspense>
                 </AdminLayout>
               </PrivateRoute>

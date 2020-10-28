@@ -8,7 +8,7 @@ import {Header, Heading} from 'components/Wrapper.style';
 import Fade from 'react-reveal/Fade';
 import CollectionCard from 'components/CollectionCard/CollectionCard';
 import NoResult from 'components/NoResult/NoResult';
-import {API, CURRENCY} from 'settings/constants';
+import {API, COLLECTION_MODE, CURRENCY} from 'settings/constants';
 import Placeholder from 'components/Placeholder/Placeholder';
 import {Plus} from "../../assets/icons/Plus";
 import {useDrawerDispatch, useDrawerState} from "../../context/DrawerContext";
@@ -67,6 +67,7 @@ export default function NewCollections() {
         try {
             if (address) {
                 const res = await HTTP.GetRequest(API.MY_COLLECTIONS_get, {address});
+                res.data.data.result.map(_ => _.mode = COLLECTION_MODE.ALL);
                 setCollectionList(res.data.data.result);
                 setCollectionListFiltered(res.data.data.result);
             }

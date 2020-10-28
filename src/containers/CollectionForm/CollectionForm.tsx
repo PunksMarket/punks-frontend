@@ -99,6 +99,7 @@ const AddCollection: React.FC<Props> = (props) => {
                                     borderBottomLeftRadius: '3px',
                                     marginRight: '15px',
                                     color: $theme.colors.red400,
+                                    background: 'rgb(246, 246, 246)',
                                 }),
                             },
                         }}

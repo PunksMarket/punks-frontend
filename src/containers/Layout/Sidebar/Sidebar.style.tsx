@@ -39,9 +39,33 @@ export const NavLink = styled(NavLinks, ({ $theme }) => ({
   color: $theme.colors.textDark,
   display: "flex",
   alignItems: "center",
-  padding: "20px 55px 20px 30px",
+  padding: "15px 10px 15px 20px",
   textDecoration: "none",
   transition: "0.15s ease-in-out",
+
+  "@media only screen and (max-width: 767px)": {
+    width: "100%",
+    padding: "20px 35px"
+  },
+
+  "&.active": {
+    color: $theme.colors.primary,
+    backgroundColor: $theme.colors.backgroundF7,
+    borderRadius: "50px 0 0 50px"
+  }
+}));
+
+export const NavLinkDummy = styled('div', ({ $theme }) => ({
+  ...$theme.typography.fontBold16,
+  width: "calc(100% - 30px)",
+  outline: "0",
+  color: $theme.colors.textDark,
+  display: "flex",
+  alignItems: "center",
+  textDecoration: "none",
+  transition: "0.15s ease-in-out",
+  padding: "30px 0 5px 30px",
+  fontSize: "13px",
 
   "@media only screen and (max-width: 767px)": {
     width: "100%",
