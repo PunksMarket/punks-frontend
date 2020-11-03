@@ -5,6 +5,11 @@ language: node_js
 node_js:
   - 12
 
+env:
+  global:
+    - DEV_SERVER_ADDRESS=http://54.163.208.250/api/v1
+    - PROD_SERVER_ADDRESS=http://54.163.208.250/api/v1
+
 cache:
   yarn: true
   directories:
@@ -25,7 +30,7 @@ install:
 deploy:
   - provider: script
     script: >-
-      yarn build;
+      REACT_APP_SERVER_ADDRESS=$DEV_SERVER_ADDRESS yarn build;
       sls -v deploy;
       sls -v syncToS3;
       sls -v invalidateCloudFrontCache;
@@ -34,7 +39,7 @@ deploy:
       branch: staging
   - provider: script
     script: >-
-      yarn build;
+      REACT_APP_SERVER_ADDRESS=$PROD_SERVER_ADDRESS yarn build;
       sls -v -s prod deploy;
       sls -v -s prod syncToS3;
       sls -v -s prod invalidateCloudFrontCache;
