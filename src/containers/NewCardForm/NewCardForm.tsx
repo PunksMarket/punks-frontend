@@ -211,7 +211,7 @@ const NewCardForm: React.FC<Props> = () => {
                                             name={item}
                                             inputRef={register}
                                             readOnly={item === "Image"}
-                                            type={(item === "totalSupply" || item === "price") ? "number" : "text"}
+                                            type="text"
                                         />
                                     </FormFields>
                                 </Col>
