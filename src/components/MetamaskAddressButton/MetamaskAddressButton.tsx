@@ -37,9 +37,7 @@ function MetamaskAddressButton() {
 
         if (ethereum.selectedAddress === null) {
             try {
-                console.log('mohan - ', 'ethereum.request');
                 await ethereum.request({method: 'eth_requestAccounts'});
-                console.log('mohan - done - ', 'ethereum.request');
             } catch (err) {
                 //console.log('err :>> ', err);
             }
