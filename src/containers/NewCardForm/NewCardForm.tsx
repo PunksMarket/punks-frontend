@@ -6,8 +6,8 @@ import Select from 'components/Select/Select';
 import Button from 'components/Button/Button';
 import DrawerBox from 'components/DrawerBox/DrawerBox';
 import {Grid, Row, Col} from 'components/FlexBox/FlexBox';
-import {Form} from '../DrawerItems/DrawerItems.style';
-import {FormFields, FormLabel} from 'components/FormFields/FormFields';
+// import {Form} from '../DrawerItems/DrawerItems.style';
+import {FormFields, FormLabel, Error} from 'components/FormFields/FormFields';
 import * as HTTP from "../../utils/http";
 import {API} from "../../settings/constants";
 import extractErrors from "../../utils/error";
@@ -20,12 +20,14 @@ import config from "../../utils/default";
 import BigNumber from "bignumber.js";
 import {yupResolver} from '@hookform/resolvers/yup';
 import * as Yup from "yup";
+import {Formik, Form, Field} from "formik";
+// import {FormikReactSelect} from "../../components/FormCustomFields/FormikFields";
 
 const items = ['dataLink', 'title', 'description', 'totalSupply', 'price'];
 const extensionImage = ["image/pjp", "image/jpg", "image/pjpeg", "image/jfif", "image/png", "image/jpg", "image/jpeg", "image/gif"];
 const extensionVideo = ["video/ogv", "video/ogm", "video/ogg", "video/webm", "video/mp4"];
 
-const RegisterSchema = Yup.object().shape({
+let RegisterSchema = Yup.object().shape({
     dataLink: Yup.string().required("Please upload the file"),
     title: Yup.string().required("Please enter the Name").max(100, "Max length exceeded"),
     description: Yup.string().required("Please enter the description").max(1000, "Max length exceeded"),
@@ -37,7 +39,6 @@ const RegisterSchema = Yup.object().shape({
 type Props = {};
 const NewCardForm: React.FC<Props> = () => {
 
-
     const [collectionOptions, setCollectionOptions] = useState([]);
     const [selectedCollection, setSelectedCollection] = useState(null);
     const [fileData, setFileData] = useState(null);
@@ -46,6 +47,7 @@ const NewCardForm: React.FC<Props> = () => {
     const [ipfsHash, setIpfsHash] = useState('');
     const [ipfsExt, setIpfsExt] = useState(0);
     const [submitting, setSubmitting] = useState(false);
+    const [showCollectionError, setCollectionError] = useState(false);
     const {address} = useContext(AuthContext);
 
     const {register, handleSubmit, setValue} = useForm({
@@ -65,6 +67,7 @@ const NewCardForm: React.FC<Props> = () => {
 
     function onCollectionChange({value}) {
         setSelectedCollection(value);
+        setCollectionError(false);
     }
 
     function onFileChosen(files) {
@@ -96,6 +99,10 @@ const NewCardForm: React.FC<Props> = () => {
     function capitalize(str) {
         return str.charAt(0).toUpperCase() + str.slice(1);
     }
+
+    const MyInput = ({field, form, ...props}) => {
+        return <Input {...field} {...props} />;
+    };
 
     async function fetchCollections(address) {
         setCollectionOptions([]);
@@ -143,11 +150,12 @@ const NewCardForm: React.FC<Props> = () => {
     async function onSubmit(values) {
         console.log(selectedCollection, values);
 
-        if (submitting) {
+        if (!selectedCollection) {
+            setCollectionError(true);
             return;
         }
 
-        if (!selectedCollection) {
+        if (submitting) {
             return;
         }
 
@@ -197,116 +205,136 @@ const NewCardForm: React.FC<Props> = () => {
             <br/>
             <br/>
 
-            <Form onSubmit={handleSubmit(onSubmit)} style={{paddingBottom: 0}}>
-                <DrawerBox>
-                    <h3 style={{margin: '0 0 30px 0'}}>Enter your image information</h3>
-                    <Row>
-
-                        {items.map((item, index) => {
-                            return (
-                                <Col xs={12} sm={6} md={4} key={index} style={{marginBottom: '20px'}}>
+            <Formik
+                initialValues={{
+                    dataLink: ipfsHash,
+                    title: '',
+                    description: '',
+                    totalSupply: 0,
+                    price: 0,
+                    collection: null
+                }}
+                enableReinitialize={true}
+                validationSchema={RegisterSchema}
+                validateOnChange={false}
+                validateOnBlur={false}
+                onSubmit={onSubmit}>
+                {({setFieldValue, setFieldTouched, errors, touched, setErrors}) => (
+                    <Form style={{paddingBottom: 0}}>
+                        <DrawerBox>
+                            <h3 style={{margin: '0 0 30px 0'}}>Enter your image information</h3>
+                            <Row>
+                                {items.map((item, index) => {
+                                    return (
+                                        <Col xs={12} sm={6} md={4} key={index} style={{marginBottom: '20px'}}>
+                                            <FormFields>
+                                                <FormLabel>{capitalize(item)}{item === "price" && " (ETH)"}</FormLabel>
+                                                <Field
+                                                    component={MyInput}
+                                                    name={item}
+                                                    readOnly={item === "Image"}
+                                                    type={(item === "totalSupply" || item === "price") ? "number" : "text"}
+                                                />
+                                                {errors[item] && touched[item] ? (
+                                                    <Error>{errors[item]}</Error>
+                                                ) : null}
+                                            </FormFields>
+                                        </Col>
+                                    )
+                                })}
+                                <Col xs={12} sm={6} md={4} style={{marginBottom: '20px'}}>
                                     <FormFields>
-                                        <FormLabel>{capitalize(item)}{item === "price" && " (ETH)"}</FormLabel>
-                                        <Input
-                                            name={item}
-                                            inputRef={register}
-                                            readOnly={item === "Image"}
-                                            type="text"
-                                        />
-                                    </FormFields>
-                                </Col>
-                            )
-                        })}
-
-                        <Col xs={12} sm={6} md={4} style={{marginBottom: '20px'}}>
-                            <FormFields>
-                                <FormLabel>Collection</FormLabel>
-                                <Select
-                                    inputRef={register}
-                                    options={collectionOptions}
-                                    labelKey="label"
-                                    valueKey="value"
-                                    placeholder="Choose..."
-                                    value={selectedCollection}
-                                    searchable={false}
-                                    onChange={onCollectionChange}
-                                    overrides={{
-                                        Placeholder: {
-                                            style: ({$theme}) => {
-                                                return {
-                                                    ...$theme.typography.fontBold14,
-                                                    color: $theme.colors.textNormal,
-                                                };
-                                            },
-                                        },
-                                        DropdownListItem: {
-                                            style: ({$theme}) => {
-                                                return {
-                                                    ...$theme.typography.fontBold14,
-                                                    color: $theme.colors.textNormal,
-                                                };
-                                            },
-                                        },
-                                        OptionContent: {
-                                            style: ({$theme, $selected}) => {
-                                                return {
-                                                    ...$theme.typography.fontBold14,
-                                                    color: $selected
-                                                        ? $theme.colors.textDark
-                                                        : $theme.colors.textNormal,
-                                                };
-                                            },
-                                        },
-                                        SingleValue: {
-                                            style: ({$theme}) => {
-                                                return {
-                                                    ...$theme.typography.fontBold14,
-                                                    color: $theme.colors.textNormal,
-                                                };
-                                            },
-                                        },
-                                        Popover: {
-                                            props: {
-                                                overrides: {
-                                                    Body: {
-                                                        style: {zIndex: 5},
+                                        <FormLabel>Collection</FormLabel>
+                                        <Select
+                                            name="collection"
+                                            id="collection"
+                                            options={collectionOptions}
+                                            labelKey="label"
+                                            valueKey="value"
+                                            placeholder="Choose..."
+                                            value={selectedCollection}
+                                            searchable={false}
+                                            onChange={onCollectionChange}
+                                            onBlur={setFieldTouched}
+                                            overrides={{
+                                                Placeholder: {
+                                                    style: ({$theme}) => {
+                                                        return {
+                                                            ...$theme.typography.fontBold14,
+                                                            color: $theme.colors.textNormal,
+                                                        };
                                                     },
                                                 },
-                                            },
-                                        },
-                                    }}
-                                />
-                            </FormFields>
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col md={4}> </Col>
-                        <Col md={4}> </Col>
-                        <Col md={4}>
-                            <FormFields>
-                                <Button
-                                    type="submit"
-                                    overrides={{
-                                        BaseButton: {
-                                            style: ({$theme}) => ({
-                                                width: '100%',
-                                                marginLeft: 'auto',
-                                                borderTopLeftRadius: '3px',
-                                                borderTopRightRadius: '3px',
-                                                borderBottomLeftRadius: '3px',
-                                                borderBottomRightRadius: '3px',
-                                            }),
-                                        },
-                                    }}
-                                >
-                                    Submit
-                                </Button>
-                            </FormFields>
-                        </Col>
-                    </Row>
-                </DrawerBox>
-            </Form>
-
+                                                DropdownListItem: {
+                                                    style: ({$theme}) => {
+                                                        return {
+                                                            ...$theme.typography.fontBold14,
+                                                            color: $theme.colors.textNormal,
+                                                        };
+                                                    },
+                                                },
+                                                OptionContent: {
+                                                    style: ({$theme, $selected}) => {
+                                                        return {
+                                                            ...$theme.typography.fontBold14,
+                                                            color: $selected
+                                                                ? $theme.colors.textDark
+                                                                : $theme.colors.textNormal,
+                                                        };
+                                                    },
+                                                },
+                                                SingleValue: {
+                                                    style: ({$theme}) => {
+                                                        return {
+                                                            ...$theme.typography.fontBold14,
+                                                            color: $theme.colors.textNormal,
+                                                        };
+                                                    },
+                                                },
+                                                Popover: {
+                                                    props: {
+                                                        overrides: {
+                                                            Body: {
+                                                                style: {zIndex: 5},
+                                                            },
+                                                        },
+                                                    },
+                                                },
+                                            }}
+                                        />
+                                        {showCollectionError ? (<Error>Collection is required</Error>) : null}
+                                    </FormFields>
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col md={4}> </Col>
+                                <Col md={4}> </Col>
+                                <Col md={4}>
+                                    <FormFields>
+                                        <Button
+                                            type="submit"
+                                            overrides={{
+                                                BaseButton: {
+                                                    style: ({$theme}) => ({
+                                                        width: '100%',
+                                                        marginLeft: 'auto',
+                                                        borderTopLeftRadius: '3px',
+                                                        borderTopRightRadius: '3px',
+                                                        borderBottomLeftRadius: '3px',
+                                                        borderBottomRightRadius: '3px',
+                                                    }),
+                                                },
+                                            }}
+                                        >
+                                            Submit
+                                        </Button>
+                                    </FormFields>
+                                </Col>
+                            </Row>
+                        </DrawerBox>
+                    </Form>
+                )}
+            </Formik>
         </Grid>
     );
 };
