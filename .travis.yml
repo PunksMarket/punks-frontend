@@ -7,8 +7,8 @@ node_js:
 
 env:
   global:
-    - DEV_SERVER_ADDRESS=http://54.163.208.250/api/v1
-    - PROD_SERVER_ADDRESS=http://54.163.208.250/api/v1
+    - DEV_SERVER_ADDRESS=https://api.cypherpunks.co.uk/api/v1
+    - PROD_SERVER_ADDRESS=https://api.cypherpunks.co.uk/api/v1
 
 cache:
   yarn: true
