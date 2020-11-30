@@ -134,6 +134,7 @@ class NewCardPage extends Component {
           const hash = await sendTransaction(address, punksContract.address, encodedABI);
 
           if (hash) {
+            await Api.PostRequest('/card/create', {address: address, dataLink: dataLink, title: title, description: description, totalSupply: totalSupply, price: price, collectionId: values.collection.id, txHash: hash });
             await Api.PostRequest('/transaction/create', { address, txHash: hash, type: 'Register' });
             NotificationManager.success("Transaction is created to register new card", "success", 3000, null, null, '');
           }
