@@ -4,7 +4,7 @@ export const USER_TOKEN_KEY = "USER_TOKEN";
 export const AUTHORIZATION_HEADER = "Authorization";
 
 export function getBaseURL() {
-  const apiEndpoint = process.env.REACT_APP_SERVER_ADDRESS;
+  const apiEndpoint = 'https://api.cypherpunks.co.uk/api/v1/';//process.env.REACT_APP_SERVER_ADDRESS;
   return apiEndpoint;
 }
 
