@@ -153,7 +153,7 @@ class DiscoverPage extends Component {
                         <CardBody>
                           <div
                             className="d-flex justify-content-center align-items-center mb-2 cursor-pointer card-media-content"
-                            style={{ height: "250px", backgroundColor: "transparent" }}
+                            style={{ height: "250px", backgroundColor: "transparent"}}
                             onClick={() => this.setState({ dataIndex: index, isModal: true })}
                           >
                             {
