@@ -77,7 +77,6 @@ class DiscoverPage extends Component {
       const encodedABI = punksContract.contract.methods["buy"](data[index].tokenId, 1).encodeABI();
 
       const wei = `0x${(BigNumber(web3.utils.toWei(data[index].price.toString(), 'ether'))).toString(16)}`;
-      console.log('wei :>> ', wei);
 
       const hash = await sendTransaction(address, punksContract.address, encodedABI, wei);
       if (hash) {

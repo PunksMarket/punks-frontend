@@ -41,8 +41,6 @@ class CollectionsPage extends Component {
         collections: res.data.data.result,
         user: res.data.data.userId,
         loading: false
-      },() => {
-        console.log("Collection Cards Res => ",this.state.collections[1].cards);
       });
     } catch (error) {
       const errorMsg = extractErrors(error);
