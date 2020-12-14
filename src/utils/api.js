@@ -5,6 +5,7 @@ export const AUTHORIZATION_HEADER = "Authorization";
 
 export function getBaseURL() {
   const apiEndpoint = process.env.REACT_APP_SERVER_ADDRESS;
+
   return apiEndpoint;
 }
 
