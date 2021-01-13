@@ -11,6 +11,7 @@ import { NotificationManager } from '../../components/common/react-notifications
 import Breadcrumb from "../../containers/navs/Breadcrumb";
 import * as Api from "../../utils/api";
 import extractErrors from '../../utils/error';
+import "../app/collections.css"
 
 class CollectionsPage extends Component {
   constructor(props) {
@@ -41,8 +42,6 @@ class CollectionsPage extends Component {
         collections: res.data.data.result,
         user: res.data.data.userId,
         loading: false
-      },() => {
-        console.log("Collection Cards Res => ",this.state.collections[1].cards);
       });
     } catch (error) {
       const errorMsg = extractErrors(error);
@@ -110,13 +109,16 @@ class CollectionsPage extends Component {
                     <Colxx xxs="12" xs="6" md="4" lg="3" key={index} >
                       <Link to={`/app/collection/${item.id}/general`}>
                         <Card className="mb-2">
-                          <CardBody style={{opacity: "0.4",backgroundImage:`url('https://ipfs.io/ipfs/${item.cards[0].dataLink}')`, backgroundSize:"cover",backgroundPosition: "center top",}}>
-                            <div>
-                              <h5>{item.name}</h5>
+                          <CardBody>
+                            <img className="backgroundImg" src={`https://ipfs.io/ipfs/${item.cards[0].dataLink}`} />  
+                            <div className="centered">
+                              <div>
+                                <h5>{item.name}</h5>
+                              </div>
+                              <div>{moment(item.createdAt).format("MM/DD/YYYY hh:mm")}</div>
+                              <div>{item.tokenCount} tokens</div>
+                              {user && user === item.userId ? (<Badge>My collection</Badge>) : ""}
                             </div>
-                            <div>{moment(item.createdAt).format("MM/DD/YYYY hh:mm")}</div>
-                            <div>{item.tokenCount} tokens</div>
-                            {user && user === item.userId ? (<Badge>My collection</Badge>) : ""}
                           </CardBody>
                         </Card>
                       </Link>
