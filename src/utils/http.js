@@ -4,7 +4,9 @@ export const USER_TOKEN_KEY = "USER_TOKEN";
 export const AUTHORIZATION_HEADER = "Authorization";
 
 export function getBaseURL() {
-  return process.env.REACT_APP_SERVER_ADDRESS;
+  const apiEndpoint = process.env.REACT_APP_SERVER_ADDRESS;
+
+  return apiEndpoint;
 }
 
 axios.defaults.baseURL = getBaseURL();
